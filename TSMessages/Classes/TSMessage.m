@@ -170,7 +170,7 @@ __weak static UIViewController *_defaultViewController;
             currentNavigationController = (UINavigationController *)currentView.viewController;
         else
             currentNavigationController = (UINavigationController *)currentView.viewController.parentViewController;
-            
+        
         BOOL isViewIsUnderStatusBar = [[[currentNavigationController childViewControllers] firstObject] wantsFullScreenLayout];
         if (!isViewIsUnderStatusBar && currentNavigationController.parentViewController == nil) {
             isViewIsUnderStatusBar = ![currentNavigationController isNavigationBarHidden]; // strange but true
@@ -179,10 +179,7 @@ __weak static UIViewController *_defaultViewController;
         {
             [currentNavigationController.view insertSubview:currentView
                                                belowSubview:[currentNavigationController navigationBar]];
-            verticalOffset = [currentNavigationController navigationBar].bounds.size.height;
-            if ([TSMessage iOS7StyleEnabled] || isViewIsUnderStatusBar) {
-                addStatusBarHeightToVerticalOffset();
-            }
+            verticalOffset = CGRectGetMaxY([currentNavigationController navigationBar].frame);
         }
         else
         {
@@ -219,7 +216,7 @@ __weak static UIViewController *_defaultViewController;
         }
         toPoint = CGPointMake(currentView.center.x, y);
     }
-
+    
     dispatch_block_t animationBlock = ^{
         currentView.center = toPoint;
         if (![TSMessage iOS7StyleEnabled]) {
@@ -237,7 +234,7 @@ __weak static UIViewController *_defaultViewController;
                          animations:animationBlock
                          completion:completionBlock];
     } else {
-        #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 70000
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 70000
         [UIView animateWithDuration:kTSMessageAnimationDuration + 0.1
                               delay:0
              usingSpringWithDamping:0.8
@@ -245,7 +242,7 @@ __weak static UIViewController *_defaultViewController;
                             options:UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction
                          animations:animationBlock
                          completion:completionBlock];
-        #endif
+#endif
     }
     
     if (currentView.duration == TSMessageNotificationDurationAutomatic)
@@ -360,9 +357,9 @@ __weak static UIViewController *_defaultViewController;
     dispatch_once(&onceToken, ^{
         // Decide wheter to use iOS 7 style or not based on the running device and the base sdk
         BOOL iOS7SDK = NO;
-        #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 70000
-            iOS7SDK = YES;
-        #endif
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 70000
+        iOS7SDK = YES;
+#endif
         
         _useiOS7Style = ! (TS_SYSTEM_VERSION_LESS_THAN(@"7.0") || !iOS7SDK);
     });
