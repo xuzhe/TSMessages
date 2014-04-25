@@ -27,7 +27,7 @@
 
 @implementation TSMessage
 
-static TSMessage *sharedMessages;
+static TSMessage *sharedMessage;
 static BOOL notificationActive;
 
 static BOOL _useiOS7Style;
@@ -37,11 +37,11 @@ __weak static UIViewController *_defaultViewController;
 
 + (TSMessage *)sharedMessage
 {
-    if (!sharedMessages)
+    if (!sharedMessage)
     {
-        sharedMessages = [[[self class] alloc] init];
+        sharedMessage = [[[self class] alloc] init];
     }
-    return sharedMessages;
+    return sharedMessage;
 }
 
 
@@ -69,6 +69,45 @@ __weak static UIViewController *_defaultViewController;
                                    title:(NSString *)title
                                 subtitle:(NSString *)subtitle
                                     type:(TSMessageNotificationType)type
+                                duration:(NSTimeInterval)duration
+{
+    [self showNotificationInViewController:viewController
+                                     title:title
+                                  subtitle:subtitle
+                                     image:nil
+                                      type:type
+                                  duration:duration
+                                  callback:nil
+                               buttonTitle:nil
+                            buttonCallback:nil
+                                atPosition:TSMessageNotificationPositionTop
+                       canBeDismissedByUser:YES];
+}
+
++ (void)showNotificationInViewController:(UIViewController *)viewController
+                                   title:(NSString *)title
+                                subtitle:(NSString *)subtitle
+                                    type:(TSMessageNotificationType)type
+                                duration:(NSTimeInterval)duration
+                     canBeDismissedByUser:(BOOL)dismissingEnabled
+{
+    [self showNotificationInViewController:viewController
+                                     title:title
+                                  subtitle:subtitle
+                                     image:nil
+                                      type:type
+                                  duration:duration
+                                  callback:nil
+                               buttonTitle:nil
+                            buttonCallback:nil
+                                atPosition:TSMessageNotificationPositionTop
+                       canBeDismissedByUser:dismissingEnabled];
+}
+
++ (void)showNotificationInViewController:(UIViewController *)viewController
+                                   title:(NSString *)title
+                                subtitle:(NSString *)subtitle
+                                    type:(TSMessageNotificationType)type
 {
     [self showNotificationInViewController:viewController
                                      title:title
@@ -80,7 +119,7 @@ __weak static UIViewController *_defaultViewController;
                                buttonTitle:nil
                             buttonCallback:nil
                                 atPosition:TSMessageNotificationPositionTop
-                       canBeDismisedByUser:YES];
+                      canBeDismissedByUser:YES];
 }
 
 
@@ -94,7 +133,7 @@ __weak static UIViewController *_defaultViewController;
                              buttonTitle:(NSString *)buttonTitle
                           buttonCallback:(void (^)())buttonCallback
                               atPosition:(TSMessageNotificationPosition)messagePosition
-                     canBeDismisedByUser:(BOOL)dismissingEnabled
+                    canBeDismissedByUser:(BOOL)dismissingEnabled
 {
     // Create the TSMessageView
     TSMessageView *v = [[TSMessageView alloc] initWithTitle:title
@@ -107,7 +146,7 @@ __weak static UIViewController *_defaultViewController;
                                                 buttonTitle:buttonTitle
                                              buttonCallback:buttonCallback
                                                  atPosition:messagePosition
-                                          shouldBeDismissed:dismissingEnabled];
+                                       canBeDismissedByUser:dismissingEnabled];
     [self prepareNotificationToBeShown:v];
 }
 
@@ -173,9 +212,9 @@ __weak static UIViewController *_defaultViewController;
         
         BOOL isViewIsUnderStatusBar = [[[currentNavigationController childViewControllers] firstObject] wantsFullScreenLayout];
         if (!isViewIsUnderStatusBar && currentNavigationController.parentViewController == nil) {
-            isViewIsUnderStatusBar = ![currentNavigationController isNavigationBarHidden]; // strange but true
+            isViewIsUnderStatusBar = ![TSMessage isNavigationBarInNavigationControllerHidden:currentNavigationController]; // strange but true
         }
-        if (![currentNavigationController isNavigationBarHidden])
+        if (![TSMessage isNavigationBarInNavigationControllerHidden:currentNavigationController])
         {
             [currentNavigationController.view insertSubview:currentView
                                                belowSubview:[currentNavigationController navigationBar]];
@@ -258,6 +297,17 @@ __weak static UIViewController *_defaultViewController;
                                       withObject:currentView
                                       afterDelay:currentView.duration];
                        });
+    }
+}
+
++ (BOOL)isNavigationBarInNavigationControllerHidden:(UINavigationController *)navController
+{
+    if([navController isNavigationBarHidden]) {
+        return YES;
+    } else if ([[navController navigationBar] isHidden]) {
+        return YES;
+    } else {
+        return NO;
     }
 }
 

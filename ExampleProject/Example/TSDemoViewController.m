@@ -65,7 +65,7 @@
                                                                      type:TSMessageNotificationTypeSuccess];
                                  }
                                      atPosition:TSMessageNotificationPositionTop
-                            canBeDismisedByUser:YES];
+                           canBeDismissedByUser:YES];
 }
 
 - (IBAction)didTapToggleNavigationBar:(id)sender {
@@ -92,7 +92,7 @@
                                     buttonTitle:nil
                                  buttonCallback:nil
                                      atPosition:TSMessageNotificationPositionTop
-                            canBeDismisedByUser:YES];
+                           canBeDismissedByUser:YES];
 }
 
 - (IBAction)didTapDismissCurrentMessage:(id)sender
@@ -112,7 +112,7 @@
                                     buttonTitle:nil
                                  buttonCallback:nil
                                      atPosition:TSMessageNotificationPositionTop
-                            canBeDismisedByUser:NO];
+                            canBeDismissedByUser:NO];
 }
 
 - (IBAction)didTapLong:(id)sender
@@ -127,7 +127,7 @@
                                     buttonTitle:nil
                                  buttonCallback:nil
                                      atPosition:TSMessageNotificationPositionTop
-                            canBeDismisedByUser:YES];
+                           canBeDismissedByUser:YES];
 }
 
 - (IBAction)didTapBottom:(id)sender
@@ -142,7 +142,7 @@
                                     buttonTitle:nil
                                  buttonCallback:nil
                                      atPosition:TSMessageNotificationPositionBottom
-                            canBeDismisedByUser:YES];
+                            canBeDismissedByUser:YES];
 }
 
 - (IBAction)didTapText:(id)sender
@@ -171,4 +171,7 @@
     return 55;
 }
 
+- (IBAction)didTapNavbarHidden:(id)sender {
+    self.navigationController.navigationBarHidden = !self.navigationController.navigationBarHidden;
+}
 @end
